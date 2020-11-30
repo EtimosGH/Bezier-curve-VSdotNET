@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.489
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "App_courbe_bezier", "App_courbe_bezier\App_courbe_bezier.vbproj", "{7DBA10B9-BE0C-4863-B6E8-ED735E31F75A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7DBA10B9-BE0C-4863-B6E8-ED735E31F75A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7DBA10B9-BE0C-4863-B6E8-ED735E31F75A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7DBA10B9-BE0C-4863-B6E8-ED735E31F75A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7DBA10B9-BE0C-4863-B6E8-ED735E31F75A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {107FB665-E72D-4C7E-9596-81A43AF44D5B}
+	EndGlobalSection
+EndGlobal
