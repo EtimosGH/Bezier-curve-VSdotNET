@@ -19,3 +19,15 @@ C:\Users\Nils\Desktop\App_courbe_bezier\App_courbe_bezier\obj\Debug\App_courbe_b
 C:\Users\Nils\Desktop\App_courbe_bezier\App_courbe_bezier\obj\Debug\App_courbe_bezier.exe
 C:\Users\Nils\Desktop\App_courbe_bezier\App_courbe_bezier\obj\Debug\App_courbe_bezier.xml
 C:\Users\Nils\Desktop\App_courbe_bezier\App_courbe_bezier\obj\Debug\App_courbe_bezier.pdb
+C:\Users\Nils\Source\Repos\Bezier-curve-VSdotNET\App_courbe_bezier\bin\Debug\App_courbe_bezier.exe.config
+C:\Users\Nils\Source\Repos\Bezier-curve-VSdotNET\App_courbe_bezier\bin\Debug\App_courbe_bezier.exe
+C:\Users\Nils\Source\Repos\Bezier-curve-VSdotNET\App_courbe_bezier\bin\Debug\App_courbe_bezier.pdb
+C:\Users\Nils\Source\Repos\Bezier-curve-VSdotNET\App_courbe_bezier\bin\Debug\App_courbe_bezier.xml
+C:\Users\Nils\Source\Repos\Bezier-curve-VSdotNET\App_courbe_bezier\obj\Debug\App_courbe_bezier.vbprojAssemblyReference.cache
+C:\Users\Nils\Source\Repos\Bezier-curve-VSdotNET\App_courbe_bezier\obj\Debug\App_courbe_bezier.Form1.resources
+C:\Users\Nils\Source\Repos\Bezier-curve-VSdotNET\App_courbe_bezier\obj\Debug\App_courbe_bezier.Resources.resources
+C:\Users\Nils\Source\Repos\Bezier-curve-VSdotNET\App_courbe_bezier\obj\Debug\App_courbe_bezier.vbproj.GenerateResource.cache
+C:\Users\Nils\Source\Repos\Bezier-curve-VSdotNET\App_courbe_bezier\obj\Debug\App_courbe_bezier.vbproj.CoreCompileInputs.cache
+C:\Users\Nils\Source\Repos\Bezier-curve-VSdotNET\App_courbe_bezier\obj\Debug\App_courbe_bezier.exe
+C:\Users\Nils\Source\Repos\Bezier-curve-VSdotNET\App_courbe_bezier\obj\Debug\App_courbe_bezier.xml
+C:\Users\Nils\Source\Repos\Bezier-curve-VSdotNET\App_courbe_bezier\obj\Debug\App_courbe_bezier.pdb

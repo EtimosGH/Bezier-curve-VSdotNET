@@ -23,13 +23,32 @@
         nud_nb_seg.Value = 4
         'FIN zone'
 
+        CBleu.Maximum = 255
+        CRouge.Maximum = 255
+        CVert.Maximum = 255
+
         initValues()
+        initchart()
 
     End Sub
 
     Private Sub chart_graph_Click(sender As Object, e As MouseEventArgs) Handles chart_graph.Click
         Dim chartpos As PointF
         chartpos = New PointF(chart_graph.ChartAreas("Defaut").AxisX.PixelPositionToValue(e.X), chart_graph.ChartAreas("Defaut").AxisY.PixelPositionToValue(e.Y))
+    End Sub
+
+    Private Sub AddCurveBt_Click(sender As Object, e As EventArgs) Handles AddCurveBt.Click
+        Dim str As String
+        If SelectCurve.Text = "" Or chart_graph.Series.FindByName(SelectCurve.Text) IsNot Nothing Then
+            str = chart_graph.Series.Count()
+            SelectCurve.Items.Add(str)
+            addSeries(Str)
+        Else
+            str = SelectCurve.Text
+            SelectCurve.Items.Add(SelectCurve.Text)
+            addSeries(SelectCurve.Text)
+        End If
+        SelectCurve.SelectedIndex = SelectCurve.Items.IndexOf(str)
     End Sub
 
     Private Sub init_nud()
@@ -52,10 +71,28 @@
         y_fin = nud_y_fin.Value
     End Sub
 
+    Private Sub DeleteCurveBt_Click(sender As Object, e As EventArgs) Handles DeleteCurveBt.Click
+        Try
+            chart_graph.Series(SelectCurve.Text).Points.Clear()
+            chart_graph.Series.Remove(chart_graph.Series(SelectCurve.Text))
+            SelectCurve.Items.RemoveAt(SelectCurve.FindStringExact(SelectCurve.Text))
+        Catch ex As Exception
+
+        End Try
+    End Sub
+
+    Private Sub CRouge_ValueChanged(sender As Object, e As EventArgs) Handles CRouge.ValueChanged, CBleu.ValueChanged, CVert.ValueChanged
+        Try
+            chart_graph.Series(SelectCurve.Text).Color = Color.FromArgb(CRouge.Value, CVert.Value, CBleu.Value)
+        Catch ex As Exception
+
+        End Try
+    End Sub
+
     Private Sub nud_ValueChanged(sender As Object, e As EventArgs) Handles nud_x_deb.ValueChanged, nud_x_tg_fin.ValueChanged, nud_x_tg_deb.ValueChanged, nud_x_fin.ValueChanged, nud_nb_seg.ValueChanged, nud_y_tg_fin.ValueChanged, nud_y_tg_deb.ValueChanged, nud_y_fin.ValueChanged, nud_y_deb.ValueChanged
         initValues()
         actualiserTab()
-        inconnu()
+        updateSeries()
     End Sub
 
     Public Function calcPoint(x_deb As Decimal, x_tg_deb As Decimal, x_fin As Decimal, x_tg_fin As Decimal, y_deb As Decimal, y_tg_deb As Decimal, y_fin As Decimal, y_tg_fin As Decimal, t As Decimal) As PointF
@@ -78,8 +115,7 @@
         Next n
     End Sub
 
-    Sub inconnu()
-
+    Sub initchart()
         chart_graph.ChartAreas.Clear()
         chart_graph.ChartAreas.Add("Defaut")
         chart_graph.ChartAreas("Defaut").AxisX.Interval = 0.1
@@ -93,14 +129,28 @@
         chart_graph.ChartAreas("Defaut").AxisY.Minimum = -1
 
         chart_graph.Series.Clear()
-        chart_graph.Series.Add("bezier")
-        chart_graph.Series("bezier").Color = Color.Red
-        chart_graph.Series("bezier").ChartType = DataVisualization.Charting.SeriesChartType.Line
+    End Sub
+
+    Sub updateSeries()
+        Try
+            chart_graph.Series(SelectCurve.Text).Points.Clear()
+            For Each pt As PointF In tab
+                chart_graph.Series(SelectCurve.Text).Points.AddXY(pt.X, pt.Y)
+            Next
+        Catch
+
+        End Try
+    End Sub
+
+    Sub addSeries(name As String)
+        chart_graph.Series.Add(name)
+        chart_graph.Series(name).Color = Color.FromArgb(CRouge.Value, CVert.Value, CBleu.Value)
+        chart_graph.Series(name).ChartType = DataVisualization.Charting.SeriesChartType.Line
+        actualiserTab()
 
         For Each pt As PointF In tab
-            chart_graph.Series("bezier").Points.AddXY(pt.X, pt.Y)
+            chart_graph.Series(name).Points.AddXY(pt.X, pt.Y)
         Next
-
     End Sub
 
     '   Sub abc()
