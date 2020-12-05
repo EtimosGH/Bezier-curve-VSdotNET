@@ -1,12 +1,28 @@
 ﻿Public Class Courbes
-    Public Function ptX(x_deb As Decimal, x_tg_deb As Decimal, x_fin As Decimal, x_tg_fin As Decimal, t As Decimal) As Decimal
-        Dim x As Decimal
-        Return x = ((1 - t) ^ 3) * x_deb + 3 * t * ((1 - t) ^ 2) * x_tg_deb + 3 * (t ^ 2) * (1 - t) * x_tg_fin + (t ^ 3) * x_fin
-    End Function
+    Public Cname As String
+    Public x_deb, x_tg_deb, x_tg_fin, x_fin As Decimal
+    Public y_deb, y_tg_deb, y_fin, y_tg_fin As Decimal
+    Public nbSeg As Int16
 
-    Public Function ptY(y_deb As Decimal, y_tg_deb As Decimal, y_fin As Decimal, y_tg_fin As Decimal, t As Decimal) As Decimal
-        Dim y As Decimal
-        Return y = ((1 - t) ^ 3) * y_deb + 3 * t * ((1 - t) ^ 2) * y_tg_deb + 3 * (t ^ 2) * (1 - t) * y_tg_fin + (t ^ 3) * y_fin
-    End Function
+    Public Sub New()
+        x_deb = -1
+        y_deb = -1
+        x_tg_deb = 1
+        y_tg_deb = 0
+        x_tg_fin = 0
+        y_tg_fin = 1
+        x_fin = 1
+        y_fin = 1
+        nbSeg = 4
+    End Sub
+
+    Public Property name As String
+        Get
+            Return Me.Cname
+        End Get
+        Set(value As String)
+            Cname = value
+        End Set
+    End Property
 
 End Class

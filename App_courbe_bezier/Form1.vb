@@ -1,8 +1,13 @@
 ﻿Public Class Form1
     Dim tab As List(Of PointF) 'DataVisualization.Charting.DataPoint)
-    Dim x_deb, x_tg_deb, x_tg_fin, x_fin As Decimal
-    Dim y_deb, y_tg_deb, y_fin, y_tg_fin As Decimal
-    Dim serie1 As New DataVisualization.Charting.Series
+    Dim listCourbes As List(Of Courbes)
+    Dim courbe As Courbes
+    'Dim x_deb, x_tg_deb, x_tg_fin, x_fin As Decimal
+    'Dim y_deb, y_tg_deb, y_fin, y_tg_fin As Decimal
+    'Dim nbSeg As Int16
+    Public nbCurves As Int16 = 0
+    Public except_EA_SelectedIndexChanged As Boolean = False
+    Public except_EA_nud_ValueChanged As Boolean = False
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
@@ -23,13 +28,8 @@
         nud_nb_seg.Value = 4
         'FIN zone'
 
-        CBleu.Maximum = 255
-        CRouge.Maximum = 255
-        CVert.Maximum = 255
-
-        initValues()
         initchart()
-
+        listCourbes = New List(Of Courbes)
     End Sub
 
     Private Sub chart_graph_Click(sender As Object, e As MouseEventArgs) Handles chart_graph.Click
@@ -38,20 +38,23 @@
     End Sub
 
     Private Sub AddCurveBt_Click(sender As Object, e As EventArgs) Handles AddCurveBt.Click
-        Dim str As String
-        If SelectCurve.Text = "" Or chart_graph.Series.FindByName(SelectCurve.Text) IsNot Nothing Then
-            str = chart_graph.Series.Count()
-            SelectCurve.Items.Add(str)
-            addSeries(Str)
-        Else
-            str = SelectCurve.Text
-            SelectCurve.Items.Add(SelectCurve.Text)
-            addSeries(SelectCurve.Text)
-        End If
-        SelectCurve.SelectedIndex = SelectCurve.Items.IndexOf(str)
+        except_EA_SelectedIndexChanged = True
+
+        SelectCurve.Items.Add(nbCurves)
+        SelectCurve.SelectedIndex = SelectCurve.Items.IndexOf(nbCurves)
+
+        listCourbes.Add(New Courbes)
+        listCourbes(nbCurves).name = "Courbe " + nbCurves.ToString()
+        addSeries(listCourbes(nbCurves).name)
+
+        GetCurveValue(listCourbes(SelectCurve.Text))
+
+
+        nbCurves += 1
+        except_EA_SelectedIndexChanged = False
     End Sub
 
-    Private Sub init_nud()
+    Private Sub init_nud() 'ok
         For Each nud As NumericUpDown In gb_pts.Controls.OfType(Of NumericUpDown)
             nud.Minimum = -1
             nud.Maximum = 1
@@ -60,39 +63,60 @@
         Next
     End Sub
 
-    Private Sub initValues()
-        x_deb = nud_x_deb.Value
-        y_deb = nud_y_deb.Value
-        x_tg_deb = nud_x_tg_deb.Value
-        y_tg_deb = nud_y_tg_deb.Value
-        x_tg_fin = nud_x_tg_fin.Value
-        y_tg_fin = nud_y_tg_fin.Value
-        x_fin = nud_x_fin.Value
-        y_fin = nud_y_fin.Value
+    Private Sub initValues(courbe As Courbes)
+        courbe.x_deb = nud_x_deb.Value
+        courbe.y_deb = nud_y_deb.Value
+        courbe.x_tg_deb = nud_x_tg_deb.Value
+        courbe.y_tg_deb = nud_y_tg_deb.Value
+        courbe.x_tg_fin = nud_x_tg_fin.Value
+        courbe.y_tg_fin = nud_y_tg_fin.Value
+        courbe.x_fin = nud_x_fin.Value
+        courbe.y_fin = nud_y_fin.Value
+        courbe.nbSeg = nud_nb_seg.Value
     End Sub
 
-    Private Sub DeleteCurveBt_Click(sender As Object, e As EventArgs) Handles DeleteCurveBt.Click
+    Private Sub GetCurveValue(courbe As Courbes)
+        except_EA_nud_ValueChanged = True
+        nud_x_deb.Value = courbe.x_deb
+        nud_y_deb.Value = courbe.y_deb
+        nud_x_tg_deb.Value = courbe.x_tg_deb
+        nud_y_tg_deb.Value = courbe.y_tg_deb
+        nud_x_tg_fin.Value = courbe.x_tg_fin
+        nud_y_tg_fin.Value = courbe.y_tg_fin
+        nud_x_fin.Value = courbe.x_fin
+        nud_y_fin.Value = courbe.y_fin
+        nud_nb_seg.Value = courbe.nbSeg
+        except_EA_nud_ValueChanged = False
+    End Sub
+
+    Private Sub DeleteCurveBt_Click(sender As Object, e As EventArgs) Handles DeleteCurveBt.Click ', SelectCurve.SelectedIndexChanged
         Try
-            chart_graph.Series(SelectCurve.Text).Points.Clear()
-            chart_graph.Series.Remove(chart_graph.Series(SelectCurve.Text))
+            chart_graph.Series(listCourbes(SelectCurve.Text).name).Points.Clear()
+            chart_graph.Series.Remove(chart_graph.Series(listCourbes(SelectCurve.Text).name))
             SelectCurve.Items.RemoveAt(SelectCurve.FindStringExact(SelectCurve.Text))
         Catch ex As Exception
 
         End Try
     End Sub
 
-    Private Sub CRouge_ValueChanged(sender As Object, e As EventArgs) Handles CRouge.ValueChanged, CBleu.ValueChanged, CVert.ValueChanged
-        Try
-            chart_graph.Series(SelectCurve.Text).Color = Color.FromArgb(CRouge.Value, CVert.Value, CBleu.Value)
-        Catch ex As Exception
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles ColorChange.Click
+        Dim MyDialog As New ColorDialog()
+        MyDialog.AllowFullOpen = False
+        MyDialog.ShowHelp = True
+        MyDialog.Color = chart_graph.Series(listCourbes(SelectCurve.Text).name).Color
 
-        End Try
+        If MyDialog.ShowDialog() = DialogResult.OK Then
+            chart_graph.Series(listCourbes(SelectCurve.Text).name).Color = MyDialog.Color
+        End If
     End Sub
 
     Private Sub nud_ValueChanged(sender As Object, e As EventArgs) Handles nud_x_deb.ValueChanged, nud_x_tg_fin.ValueChanged, nud_x_tg_deb.ValueChanged, nud_x_fin.ValueChanged, nud_nb_seg.ValueChanged, nud_y_tg_fin.ValueChanged, nud_y_tg_deb.ValueChanged, nud_y_fin.ValueChanged, nud_y_deb.ValueChanged
-        initValues()
-        actualiserTab()
-        updateSeries()
+
+        If (SelectCurve.Text <> "" And except_EA_nud_ValueChanged = False) Then
+
+            initValues(listCourbes(SelectCurve.Text))
+            SetSeriePoints(listCourbes(SelectCurve.Text).name)
+        End If
     End Sub
 
     Public Function calcPoint(x_deb As Decimal, x_tg_deb As Decimal, x_fin As Decimal, x_tg_fin As Decimal, y_deb As Decimal, y_tg_deb As Decimal, y_fin As Decimal, y_tg_fin As Decimal, t As Decimal) As PointF
@@ -106,16 +130,17 @@
         Return point
     End Function
 
-    Public Sub actualiserTab()
+    Public Sub actualiserTab(courbe As Courbes)
         tab = New List(Of PointF)
         Dim fact As Decimal
-         fact = 1 / nud_nb_seg.Value
+        fact = 1 / nud_nb_seg.Value
         For n = 0 To nud_nb_seg.Value
-            tab.Add(calcPoint(x_deb, x_tg_deb, x_fin, x_tg_fin, y_deb, y_tg_deb, y_fin, y_tg_fin, n * fact))
+            tab.Add(calcPoint(courbe.x_deb, courbe.x_tg_deb, courbe.x_fin, courbe.x_tg_fin, courbe.y_deb, courbe.y_tg_deb, courbe.y_fin, courbe.y_tg_fin, n * fact))
         Next n
     End Sub
 
     Sub initchart()
+
         chart_graph.ChartAreas.Clear()
         chart_graph.ChartAreas.Add("Defaut")
         chart_graph.ChartAreas("Defaut").AxisX.Interval = 0.1
@@ -129,36 +154,39 @@
         chart_graph.ChartAreas("Defaut").AxisY.Minimum = -1
 
         chart_graph.Series.Clear()
+
     End Sub
 
-    Sub updateSeries()
-        Try
-            chart_graph.Series(SelectCurve.Text).Points.Clear()
-            For Each pt As PointF In tab
-                chart_graph.Series(SelectCurve.Text).Points.AddXY(pt.X, pt.Y)
-            Next
-        Catch
-
-        End Try
-    End Sub
+    'Sub updateSeries()
+    'Try
+    '       chart_graph.Series(listCourbes(SelectCurve.Text).name).Points.Clear()
+    'For Each pt As PointF In tab
+    '           chart_graph.Series(listCourbes(SelectCurve.Text).name).Points.AddXY(pt.X, pt.Y)
+    'Next
+    'Catch
+    '
+    'End Try
+    'End Sub
 
     Sub addSeries(name As String)
         chart_graph.Series.Add(name)
-        chart_graph.Series(name).Color = Color.FromArgb(CRouge.Value, CVert.Value, CBleu.Value)
         chart_graph.Series(name).ChartType = DataVisualization.Charting.SeriesChartType.Line
-        actualiserTab()
+        SetSeriePoints(name)
+    End Sub
+
+    Sub SetSeriePoints(name As String)
+        actualiserTab(listCourbes(SelectCurve.Text))
+        chart_graph.Series(name).Points.Clear()
 
         For Each pt As PointF In tab
             chart_graph.Series(name).Points.AddXY(pt.X, pt.Y)
         Next
     End Sub
 
-    '   Sub abc()
-    '  Dim graph = Panel_g.CreateGraphics()
-    '     graph.Dispose() ; 
-    'Dim stylo As Pen
-    '   stylo = New Pen(Color.Red, 3)
-    '  graph.DrawLines(stylo, tab.ToArray())
-    ' End Sub
-
+    Private Sub SelectCurve_SelectedIndexChanged(sender As Object, e As EventArgs) Handles SelectCurve.SelectedIndexChanged
+        If except_EA_SelectedIndexChanged = False Then
+            GetCurveValue(listCourbes(SelectCurve.Text))
+        End If
+    End Sub
 End Class
+
