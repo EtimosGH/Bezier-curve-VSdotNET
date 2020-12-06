@@ -278,5 +278,18 @@
         End If
 
     End Sub
+
+    Private Sub SauvBtn_Click(sender As Object, e As EventArgs) Handles SauvBtn.Click
+        Try
+            Dim frm = Form.ActiveForm
+            Using bmp = New Bitmap(frm.Width, frm.Height)
+                frm.DrawToBitmap(bmp, New Rectangle(0, 0, bmp.Width, bmp.Height))
+                bmp.Save(PathImage.Text)
+            End Using
+        Catch ex As Exception
+
+        End Try
+
+    End Sub
 End Class
 
