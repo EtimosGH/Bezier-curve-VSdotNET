@@ -1,10 +1,7 @@
 ﻿Public Class Form1
-    Dim tab As List(Of PointF) 'DataVisualization.Charting.DataPoint)
+    Dim tab As List(Of PointF)
     Dim listCourbes As List(Of Courbes)
     Dim courbe As Courbes
-    'Dim x_deb, x_tg_deb, x_tg_fin, x_fin As Decimal
-    'Dim y_deb, y_tg_deb, y_fin, y_tg_fin As Decimal
-    'Dim nbSeg As Int16
     Public nbCurves As Int16 = 0
     Public except_EA_SelectedIndexChanged As Boolean = False
     Public except_EA_nud_ValueChanged As Boolean = False
@@ -35,7 +32,42 @@
     Private Sub chart_graph_Click(sender As Object, e As MouseEventArgs) Handles chart_graph.Click
         Dim chartpos As PointF
         chartpos = New PointF(chart_graph.ChartAreas("Defaut").AxisX.PixelPositionToValue(e.X), chart_graph.ChartAreas("Defaut").AxisY.PixelPositionToValue(e.Y))
+        Try
+            If getClosestPoint(chartpos) = "Tg_deb" Then
+                nud_x_tg_deb.Value = chartpos.X
+                nud_y_tg_deb.Value = chartpos.Y
+            ElseIf getClosestPoint(chartpos) = "Tg_fin" Then
+                nud_x_tg_fin.Value = chartpos.X
+                nud_y_tg_fin.Value = chartpos.Y
+            ElseIf getClosestPoint(chartpos) = "fin" Then
+                nud_x_fin.Value = chartpos.X
+                nud_y_fin.Value = chartpos.Y
+            Else
+                nud_x_deb.Value = chartpos.X
+                nud_y_deb.Value = chartpos.Y
+            End If
+        Catch
+
+        End Try
+
     End Sub
+
+    Function getClosestPoint(Pos As PointF) As String
+        Dim dist(3) As Decimal
+        dist(0) = Math.Sqrt(Math.Pow((chart_graph.Series("Tg_deb").Points.First().XValue - Pos.X), 2) + Math.Pow((chart_graph.Series("Tg_deb").Points.First().YValues.First() - Pos.Y), 2))
+        dist(1) = Math.Sqrt(Math.Pow((chart_graph.Series("Tg_fin").Points.First().XValue - Pos.X), 2) + Math.Pow((chart_graph.Series("Tg_fin").Points.First().YValues.First() - Pos.Y), 2))
+        dist(2) = Math.Sqrt(Math.Pow((chart_graph.Series("deb").Points.First().XValue - Pos.X), 2) + Math.Pow((chart_graph.Series("deb").Points.First().YValues.First() - Pos.Y), 2))
+        dist(3) = Math.Sqrt(Math.Pow((chart_graph.Series("fin").Points.First().XValue - Pos.X), 2) + Math.Pow((chart_graph.Series("fin").Points.First().YValues.First() - Pos.Y), 2))
+        If dist(0) = dist.Min() Then
+            Return "Tg_deb"
+        ElseIf dist(1) = dist.Min() Then
+            Return "Tg_fin"
+        ElseIf dist(2) = dist.Min() Then
+            Return "deb"
+        Else
+            Return "fin"
+        End If
+    End Function
 
     Private Sub AddCurveBt_Click(sender As Object, e As EventArgs) Handles AddCurveBt.Click
         except_EA_SelectedIndexChanged = True
@@ -117,6 +149,32 @@
             initValues(listCourbes(SelectCurve.Text))
             SetSeriePoints(listCourbes(SelectCurve.Text).name)
         End If
+        Try
+            chart_graph.Series("Tg_deb").Points.Remove(chart_graph.Series("Tg_deb").Points.First())
+            chart_graph.Series("Tg_deb").Points.AddXY(nud_x_tg_deb.Value, nud_y_tg_deb.Value)
+        Catch ex As Exception
+
+        End Try
+
+        Try
+            chart_graph.Series("Tg_fin").Points.Remove(chart_graph.Series("Tg_fin").Points.First())
+            chart_graph.Series("Tg_fin").Points.AddXY(nud_x_tg_fin.Value, nud_y_tg_fin.Value)
+        Catch ex As Exception
+
+        End Try
+        Try
+            chart_graph.Series("deb").Points.Remove(chart_graph.Series("deb").Points.First())
+            chart_graph.Series("deb").Points.AddXY(nud_x_deb.Value, nud_y_deb.Value)
+        Catch ex As Exception
+
+        End Try
+
+        Try
+            chart_graph.Series("fin").Points.Remove(chart_graph.Series("fin").Points.First())
+            chart_graph.Series("fin").Points.AddXY(nud_x_fin.Value, nud_y_fin.Value)
+        Catch ex As Exception
+
+        End Try
     End Sub
 
     Public Function calcPoint(x_deb As Decimal, x_tg_deb As Decimal, x_fin As Decimal, x_tg_fin As Decimal, y_deb As Decimal, y_tg_deb As Decimal, y_fin As Decimal, y_tg_fin As Decimal, t As Decimal) As PointF
@@ -155,18 +213,49 @@
 
         chart_graph.Series.Clear()
 
-    End Sub
+        chart_graph.Series.Add("Tg_deb")
+        With chart_graph.Series("Tg_deb")
+            .IsVisibleInLegend = False
+            .ChartType = DataVisualization.Charting.SeriesChartType.Point
+            '.MarkerSize = 30
+            .MarkerBorderColor = Color.Black
+            '.MarkerBorderWidth = 4
+            .MarkerColor = Color.Red
+            chart_graph.Series("Tg_deb").Points.AddXY(nud_x_tg_deb.Value, nud_y_tg_deb.Value)
+        End With
+        chart_graph.Series.Add("Tg_fin")
+        With chart_graph.Series("Tg_fin")
+            .IsVisibleInLegend = False
+            .ChartType = DataVisualization.Charting.SeriesChartType.Point
+            '.MarkerSize = 30
+            .MarkerBorderColor = Color.Black
+            '.MarkerBorderWidth = 4
+            .MarkerColor = Color.Yellow
+            chart_graph.Series("Tg_fin").Points.AddXY(nud_x_tg_fin.Value, nud_y_tg_fin.Value)
+        End With
 
-    'Sub updateSeries()
-    'Try
-    '       chart_graph.Series(listCourbes(SelectCurve.Text).name).Points.Clear()
-    'For Each pt As PointF In tab
-    '           chart_graph.Series(listCourbes(SelectCurve.Text).name).Points.AddXY(pt.X, pt.Y)
-    'Next
-    'Catch
-    '
-    'End Try
-    'End Sub
+        chart_graph.Series.Add("deb")
+        With chart_graph.Series("deb")
+            .IsVisibleInLegend = False
+            .ChartType = DataVisualization.Charting.SeriesChartType.Point
+            '.MarkerSize = 30
+            .MarkerBorderColor = Color.Black
+            '.MarkerBorderWidth = 4
+            .MarkerColor = Color.Blue
+            chart_graph.Series("deb").Points.AddXY(nud_x_deb.Value, nud_y_deb.Value)
+        End With
+        chart_graph.Series.Add("fin")
+        With chart_graph.Series("fin")
+            .IsVisibleInLegend = False
+            .ChartType = DataVisualization.Charting.SeriesChartType.Point
+            '.MarkerSize = 30
+            .MarkerBorderColor = Color.Black
+            '.MarkerBorderWidth = 4
+            .MarkerColor = Color.Green
+            chart_graph.Series("fin").Points.AddXY(nud_x_fin.Value, nud_y_fin.Value)
+        End With
+
+    End Sub
 
     Sub addSeries(name As String)
         chart_graph.Series.Add(name)
@@ -187,6 +276,7 @@
         If except_EA_SelectedIndexChanged = False Then
             GetCurveValue(listCourbes(SelectCurve.Text))
         End If
+
     End Sub
 End Class
 
